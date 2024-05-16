@@ -35,6 +35,16 @@
         width:100%;
         height:100%;
     }
+
+    .btn-primary{
+        font-size: 13px;
+        border-radius: 4px;
+    }
+
+    #updateRoomPromotionContent {
+        height: 150px;
+    }
+
 </style>
 
 </head>
@@ -83,7 +93,40 @@
 
             <td th:text="${promotion.promotionId}"></td>
             <td th:text="${promotion.promotionTitle}"></td>
-            <td th:text="${promotion.promotionContent}"></td>
+
+
+            <td>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
+                        th:data-updateRoomPromotionContent="${promotion.promotionContent}"
+                        onclick="fillFormContent(this.getAttribute('data-updateRoomPromotionContent'));">
+                    詳細說明
+                </button>
+            </td>
+
+            <!------- 房間促銷說明Modal -------->
+            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog ">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel">房間促銷詳細說明</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div id="roomPromotionContent" class="modal-body">
+                            <div class="mb-2" >
+                                <label for="updateRoomPromotionContent" class="col-form-label"></label>
+                                <textarea class="form-control" id="updateRoomPromotionContent" readonly></textarea>
+                            </div>
+                            <input type="hidden" name="roomPromotionId">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <!--										<button type="button" class="btn btn-primary">Understood</button>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
 
             <td>
             <span th:if="${promotion.promotionState} eq 0" class="badge bg-danger">下架</span>
@@ -151,6 +194,17 @@
             }
         });
     });
+
+
+    function fillFormContent(content) {
+        var inputElement = document.getElementById('updateRoomPromotionContent');
+        if (inputElement) {
+            inputElement.value = content;
+        } else {
+            console.error('Element with ID "updateRoomPromotionContent" not found.');
+        }
+    }
+
 </script>
 
 
