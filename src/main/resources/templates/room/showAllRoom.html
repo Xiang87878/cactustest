@@ -35,6 +35,14 @@
         width:100%;
         height:100%;
     }
+    .btn-primary{
+        font-size: 13px;
+        border-radius: 4px;
+    }
+
+    #updateRoomGuestName {
+        height: 150px;
+    }
 </style>
 
 </head>
@@ -68,13 +76,14 @@
         <thead>
         <tr>
             <th>房間編號</th>
-            <th>房型編號</th>
+            <th>房型</th>
             <th>住客人數</th>
             <th>住客名單</th>
             <th>上下架狀態</th>
             <th>房間狀態</th>
             <th>房間價格</th>
             <th>修改</th>
+            <th>更改房間狀態</th>
         </tr>
         </thead>
 
@@ -84,11 +93,39 @@
 
                 <td th:text="${room.roomId}"></td>
 
-                <td th:text="${room.roomType.roomTypeId} + '-[' + ${room.roomType.roomTypeName} + ']'"></td>
+                <td th:text="${room.roomType.roomTypeName}"></td>
 
                 <td th:text="${room.roomGuestAmount}"></td>
 
-                <td th:text="${room.roomGuestName}"></td>
+                <td>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
+                            th:data-updateRoomGuestName="${room.roomGuestName}"
+                            onclick="fillFormContent(this.getAttribute('data-updateRoomGuestName'));">
+                        房客名單詳細
+                    </button>
+                </td>
+
+                <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog ">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="staticBackdropLabel">房客名單詳細</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div id="roomGuestName" class="modal-body">
+                                <div class="mb-2" >
+                                    <label for="updateRoomGuestName" class="col-form-label"></label>
+                                    <textarea class="form-control" id="updateRoomGuestName" readonly></textarea>
+                                </div>
+                                <input type="hidden" name="roomId">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <!--										<button type="button" class="btn btn-primary">Understood</button>-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <td>
                     <span th:if="${room.roomStatus} eq 0" class="badge bg-danger">下架</span>
@@ -111,6 +148,20 @@
                         <input type="submit" value="修改">
                         <input type="hidden" name="roomId" th:value="${room.getRoomId()}"></form>
 
+                </td>
+
+                <td>
+                    <form method="post" th:action="@{/room/updateRoomSaleStatus}">
+                        <select class="form-select" name="roomSaleStatus" th:value="${room.roomSaleStatus}">
+                            <option value="0" th:selected="${room.roomSaleStatus == 0}">未入住</option>
+                            <option value="1" th:selected="${room.roomSaleStatus == 1}">已入住</option>
+                            <option value="2" th:selected="${room.roomSaleStatus == 2}">待清潔</option>
+                            <option value="3" th:selected="${room.roomSaleStatus == 3}">逾期</option>
+                            <option value="4" th:selected="${room.roomSaleStatus == 4}">異常</option>
+                        </select>
+                        <input type="hidden" name="roomId" th:value="${room.roomId}">
+                        <button type="submit" class="btn btn-primary mt-2">更新</button>
+                    </form>
                 </td>
 
             </tr>
@@ -163,6 +214,15 @@
             }
         });
     });
+
+    function fillFormContent(content) {
+        var inputElement = document.getElementById('updateRoomGuestName');
+        if (inputElement) {
+            inputElement.value = content;
+        } else {
+            console.error('Element with ID "updateRoomGuestName" not found.');
+        }
+    }
 </script>
 
 

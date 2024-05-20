@@ -3,6 +3,8 @@ package com.room.controller;
 
 import com.room.model.Room;
 import com.room.model.RoomService;
+import com.roomType.model.RoomType;
+import com.roomType.model.RoomTypeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,6 +19,8 @@ public class RoomController {
 
     @Autowired
     RoomService roomService;
+    @Autowired
+    RoomTypeService roomTypeService;
 
     @GetMapping("/searchRoom")
     public String searchPage() {
@@ -37,7 +41,9 @@ public class RoomController {
     @GetMapping("/addRoom")
     public String addRoom(ModelMap model) {
         Room room = new Room();
+        List<RoomType> roomType = roomTypeService.getAll();
 
+        model.addAttribute("roomTypeListData", roomType);
         model.addAttribute("room", room);
         return "/room/addRoom";
     }
@@ -49,6 +55,8 @@ public class RoomController {
             ModelMap model){
 
         if (result.hasErrors()) {
+            List<RoomType> roomType = roomTypeService.getAll();
+            model.addAttribute("roomTypeListData", roomType);
             return "/room/addRoom";
         }
 
@@ -56,7 +64,7 @@ public class RoomController {
 
         List<Room> rooms = roomService.getAll();
         model.addAttribute("rooms", rooms);
-        return "/room/showAllRoom";
+        return "redirect:/room/getAllRoom";
 
     }
 
@@ -83,6 +91,19 @@ public class RoomController {
         model.addAttribute("room", room);
         return "/room/roomIdSearch";
 
+    }
+
+    @PostMapping("/updateRoomSaleStatus")
+    public String updateRoomSaleStatus(@RequestParam("roomId") String roomId,ModelMap model,
+                                       @RequestParam("roomSaleStatus")Byte roomSaleStatus){
+
+        Room room = roomService.findByPK(Integer.valueOf(roomId));
+        room.setRoomSaleStatus(roomSaleStatus);
+        roomService.updateRoom(room);
+
+        List<Room> rooms = roomService.getAll();
+        model.addAttribute("rooms", rooms);
+        return "/room/showAllRoom";
     }
 
 }

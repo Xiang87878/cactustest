@@ -79,7 +79,8 @@ public class RoomPromotionController {
                                   ModelMap model){
 
         if (result.hasErrors()) {
-            return "roomPromotion/updateRoomPromotion";
+            System.out.println(result.getAllErrors());
+            return "roomPromotion/showAllRoomPromotions";
         }
         roomPromotionService.updateRoomPromotion(roomPromotion);
 

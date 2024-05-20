@@ -35,6 +35,14 @@
  		width:100%;
  		height:100%;
  	}
+	.btn-primary{
+		font-size: 13px;
+		border-radius: 4px;
+	}
+
+	#updateRoomPromotionContent {
+		height: 150px;
+	}
 </style>
 
 </head>
@@ -81,21 +89,120 @@
 
 						<td th:text="${promotion.promotionId}"></td>
 						<td th:text="${promotion.promotionTitle}"></td>
-						<td th:text="${promotion.promotionContent}"></td>
+
+						<td>
+							<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
+									th:data-updateRoomPromotionContent="${promotion.promotionContent}"
+									onclick="fillFormContent(this.getAttribute('data-updateRoomPromotionContent'));">
+								詳細說明
+							</button>
+						</td>
+
+						<!------- 房間促銷說明Modal -------->
+						<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+							<div class="modal-dialog ">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title" id="staticBackdropLabel">房間促銷詳細說明</h5>
+										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									</div>
+									<div id="roomPromotionContent" class="modal-body">
+										<div class="mb-2" >
+											<label for="updateRoomPromotionContent" class="col-form-label"></label>
+											<textarea class="form-control" id="updateRoomPromotionContent" readonly></textarea>
+										</div>
+										<input type="hidden" name="roomPromotionId">
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+										<!--										<button type="button" class="btn btn-primary">Understood</button>-->
+									</div>
+								</div>
+							</div>
+						</div>
 
 						<td>
 							<span th:if="${promotion.promotionState} eq 0" class="badge bg-danger">下架</span>
 							<span th:if="${promotion.promotionState} eq 1" class="badge bg-success">上架</span>
 						</td>
 
-						<td th:text="${promotion.promotionDiscount}"></td>
-						<td th:text="${promotion.promotionStarted+'~'+promotion.promotionEnd}"></td>
-						<td>
-							<form method="post" th:action="@{/roomPromotion/getOneRoomPromotionUpdate}" style="margin-bottom: 0px;">
-								<input type="submit" value="修改">
-								<input type="hidden" name="promotionId" th:value="${promotion.getPromotionId()}"></form>
+						<td th:text="${#numbers.formatDecimal(promotion.promotionDiscount * 100, 0, 0)} + '折'"></td>
 
+						<td th:text="${promotion.promotionStarted+'~'+promotion.promotionEnd}"></td>
+
+						<td>
+							<button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+									th:data-bs-target="'#exampleModal'+ ${promotion.promotionId}" >修改
+							</button>
 						</td>
+
+						<div class="modal fade" th:id="'exampleModal'+ ${promotion.promotionId}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+							<div class="modal-dialog ">
+								<div class="modal-dialog modal-dialog-scrollable">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" id="exampleModalLabel">修改資料</h5>
+											<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+										</div>
+										<div class="modal-body" id="updateRoomPromotionDiv">
+											<!-- 表單 -->
+											<form id="roomTypeForm-${promotion.promotionId}" method="post" action="/roomPromotion/updateRoomPromotion">
+
+												<div class="mb-3" >
+													<label for="roomPromotionId" class="col-form-label" >促銷編號:</label>
+													<textarea type="text" class="form-control" id="roomPromotionId" name="roomTypeId"
+															  th:text="${promotion.promotionId}" readonly></textarea>
+
+												</div>
+
+												<div class="mb-3" >
+													<label for="PromotionTitle" class="col-form-label" >促銷標題:</label>
+													<textarea type="text" class="form-control" id="PromotionTitle" name="promotionTitle" th:text="${promotion.promotionTitle}"></textarea>
+												</div>
+
+												<div class="mb-3">
+													<label for="PromotionContent" class="col-form-label">促銷敘述:</label>
+													<textarea class="form-control"
+															  id="PromotionContent" name="promotionContent" th:text="${promotion.promotionContent}"></textarea>
+												</div>
+
+												<div class="mb-3">
+													<label for="status" class="col-form-label">上下架狀態:</label>
+													<select class="form-select" id="status" name="promotionState">
+														<option th:selected="${promotion.promotionState == 1}" value="1">上架</option>
+														<option th:selected="${promotion.promotionState == 0}" value="0">下架</option>
+													</select>
+												</div>
+
+												<div class="mb-3">
+													<label for="PromotionDiscount" class="col-form-label">促銷折扣:</label>
+													<textarea type="text" class="form-control"
+															  id="PromotionDiscount" name="promotionDiscount" th:text="${promotion.promotionDiscount}"></textarea>
+												</div>
+
+												<div class="mb-3">
+													<label for="PromotionStarted" class="col-form-label">促銷開始日:</label>
+													<input type="date" class="form-control" id="PromotionStarted" name="promotionStarted"
+														   th:value="${promotion.promotionStarted}" />
+												</div>
+												<div class="mb-3">
+													<label for="PromotionEnd" class="col-form-label">促銷結束日:</label>
+													<input type="date" class="form-control" id="PromotionEnd" name="promotionEnd"
+														   th:value="${promotion.promotionEnd}" min="${promotion.promotionStarted}" />
+												</div>
+
+												<div class="modal-footer">
+													<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+													<button type="submit" class="btn btn-primary">送出</button>
+													<input type="hidden" id="promotionId" name="promotionId" th:value="${promotion.promotionId}">
+												</div>
+											</form>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
 					</tr>
 		</th:block>
 				</tbody>
@@ -146,6 +253,31 @@
 			    }
 			});
 		});
+
+		function fillFormContent(content) {
+			var inputElement = document.getElementById('updateRoomPromotionContent');
+			if (inputElement) {
+				inputElement.value = content;
+			} else {
+				console.error('Element with ID "updateRoomPromotionContent" not found.');
+			}
+		}
+
+		// 當頁面加載完成時執行
+		window.onload = function() {
+			// 獲取促銷時間起元素
+			var promotionStartedElement = document.getElementsByName("promotionStarted")[0];
+			// 獲取促銷時間迄元素
+			var promotionEndElement = document.getElementsByName("promotionEnd")[0];
+
+			// 監聽促銷時間起元素的值改變事件
+			promotionStartedElement.addEventListener("change", function() {
+				// 獲取促銷時間起的值
+				var promotionStartedValue = new Date(promotionStartedElement.value);
+				// 設置促銷時間迄元素的最小日期為促銷時間起的日期
+				promotionEndElement.min = promotionStartedValue.toISOString().slice(0,10);
+			});
+		};
 	</script>
 
 

@@ -19,7 +19,7 @@
             <div>
                 <label>房型:</label>
                 <select th:field="*{roomType.roomTypeId}">
-                    <option th:each="roomType : ${roomTypeListData}" th:value="${room.roomType.roomTypeId}" th:text="${room.roomType.roomTypeName}" />
+                    <option th:each="roomType : ${roomTypeListData}" th:value="${roomType.roomTypeId}" th:text="${roomType.roomTypeName}" />
                 </select>
                 <span th:if="${#fields.hasErrors('roomType.roomTypeId')}" th:errors="*{roomType.roomTypeId}" class="error" id="roomType.roomTypeId.errors"></span>
             </div>
