@@ -80,11 +80,17 @@ public class RoomController {
     public String updateRoom(
             @Valid Room room,
             BindingResult result,
+            @RequestParam("roomTypeId") Integer roomTypeId,
             ModelMap model) {
 
+        RoomType roomType = roomTypeService.getById(roomTypeId);
+        room.setRoomType(roomType);
+
         if (result.hasErrors()) {
+            System.out.println(result.getAllErrors());
             return "/room/updateRoom";
         }
+
         roomService.updateRoom(room);
 
         room = roomService.findByPK(room.getRoomId());

@@ -12,4 +12,6 @@ public class RoomTypeService {
     RoomTypeRepository repository;
 
     public List<RoomType> getAll() {return repository.findAll();}
+
+    public RoomType getById(Integer id) {return repository.getById(id);}
 }

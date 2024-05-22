@@ -74,7 +74,7 @@
         <tr>
 
             <th>房間編號</th>
-            <th>房型編號</th>
+            <th>房型</th>
             <th>住客人數</th>
             <th>住客名單</th>
             <th>上下架狀態</th>
@@ -91,7 +91,7 @@
 
             <td th:text="${room.roomId}"></td>
 
-            <td th:text="${room.roomType.roomTypeId} + '-[' + ${room.roomType.roomTypeName} + ']'"></td>
+            <td th:text="${room.roomType.roomTypeName}"></td>
 
             <td th:text="${room.roomGuestAmount}"></td>
 

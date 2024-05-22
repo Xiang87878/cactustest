@@ -13,7 +13,7 @@ public class Room {
     @Column(name = "room_id", nullable = false)
     private Integer roomId;
 
-    @NotNull
+//    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "room_type_id", nullable = false)
     private RoomType roomType;
